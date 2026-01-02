@@ -1,0 +1,5 @@
+name: mcstatus
+desc: 云版MC服务器状态获取
+version: v2.0.1
+author: WZL
+repo: https://github.com/WZL0813/astrbot_plugin_wzl_mcstatus
