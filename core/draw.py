@@ -171,7 +171,7 @@ class Draw:
 
             # --- 标题区域 ---
             plugin_ver = data_map.get("version", "1.0.0")
-            draw.text((content_x, content_y + 10), "MCStatus 插件帮助", font=font_title, fill=self.CUTE_THEME["text_main"])
+            draw.text((content_x, content_y + 10), "MCStatusPro 插件帮助", font=font_title, fill=self.CUTE_THEME["text_main"])
             # 绘制版本号小胶囊
             ver_x = content_x + 360
             self.draw_cute_label(draw, ver_x+15, content_y + 20, f"Ver {plugin_ver}", font_subtitle, self.CUTE_THEME["pill_pink"], self.CUTE_THEME["pill_text_pink"])
@@ -215,7 +215,7 @@ class Draw:
             margin = 35
             current_time = datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
             footer_text_1 = f"查询时间：{current_time}"
-            footer_text_2 = "astrbot_plugin_wzl_mcstatus | Design by Ryokuryuneko"
+            footer_text_2 = "astrbot_plugin_wzl_mcstatuspro | Design by Ryokuryuneko"
             
             # 严格计算右对齐坐标
             def draw_right_align(text, y, font, color):
@@ -327,7 +327,7 @@ class Draw:
 
             current_time = datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
             footer_text_1 = f"查询时间：{current_time}"
-            footer_text_2 = "astrbot_plugin_wzl_mcstatus | Design by Ryokuryuneko"
+            footer_text_2 = "astrbot_plugin_wzl_mcstatuspro | Design by Ryokuryuneko"
             footer_base_y = bar_y + 35
             draw_right_align(footer_text_1, footer_base_y, font_footer, self.CUTE_THEME["text_footer"])
             draw_right_align(footer_text_2, footer_base_y + 22, font_footer, self.CUTE_THEME["text_footer"])
