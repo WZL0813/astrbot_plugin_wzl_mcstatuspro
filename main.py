@@ -1,22 +1,23 @@
-from astrbot.api import AstrBotConfig, logger
-from astrbot.api.event import filter, AstrMessageEvent
-from astrbot.api.star import Context, Star, StarTools, register
-from astrbot.core.platform.message_type import MessageType
-from .core.data_manager import DataManager
-from .core.command_func import CommandFunc
-from typing import Tuple
 
-plugin_version = "2.0.2"
+from astrbot.api import AstrBotConfig, logger
+from astrbot.api.event import AstrMessageEvent, filter
+from astrbot.api.star import Context, Star, StarTools
+from astrbot.core.platform.message_type import MessageType
+
+from .core.command_func import CommandFunc
+from .core.data_manager import DataManager
+
+plugin_version = "2.1.0"
 
 class mcstatus(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
         self.config = config
-        plugin_data_dir = StarTools.get_data_dir("mcstatus")
+        plugin_data_dir = StarTools.get_data_dir(self.name)
         self.bot_config = context.get_config()
         self.admin_list = self.bot_config["admins_id"]
-        
-        self.datamanager = DataManager(config_file=plugin_data_dir / "mcstatus.json")
+
+        self.datamanager = DataManager(config_dir=plugin_data_dir)
         self.datamanager.load_config()
 
         self.commandFunc = CommandFunc(admin_list=self.admin_list,
@@ -25,28 +26,40 @@ class mcstatus(Star):
                                        config=self.config,
                                        plugin_data_dir=str(plugin_data_dir))
 
-    def enabled_group_check(self, event: AstrMessageEvent) -> bool:
-        """权限检查，私聊跳过"""
+    def enabled_session_check(self, event: AstrMessageEvent) -> bool:
+        """权限检查"""
         group_id = event.get_group_id()
-        if not group_id: # 私聊
+        user_id = event.get_sender_id()
+
+        user_mode = self.config.get("divide_group", {}).get("user_block_method", "blacklist")
+        user_list = self.config.get("divide_group", {}).get("user_control_list", [])
+
+        # 用户级黑白名单检查
+        if user_mode == "blacklist":
+            if user_id in user_list:
+                return False
+        elif user_mode == "whitelist":
+            if user_id not in user_list:
+                return False
+
+        if not group_id or event.get_message_type() != MessageType.GROUP_MESSAGE: # 私聊
              return True
-             
-        mode = self.config["divide_group"]["block_method"]
-        group_list = self.config["divide_group"].get("control_list",[])
-        
-        if event.get_message_type() != MessageType.GROUP_MESSAGE:
-            return True
-        if mode == "blacklist":
+
+        group_mode = self.config.get("divide_group", {}).get("group_block_method", "blacklist")
+        group_list = self.config.get("divide_group", {}).get("group_control_list", [])
+
+        # 群组级黑白名单检查
+        if group_mode == "blacklist":
             if group_id in group_list:
                 return False
             return True
-        elif mode == "whitelist":
+        elif group_mode == "whitelist":
             if group_id in group_list:
                 return True
             return False
         return False
 
-    @filter.command("mcstatus", alias=set(["mc状态","MC状态","mcs"]))
+    @filter.command("mcstatus", alias={"mc状态","MC状态","mcs"})
     async def mcstatus(self,
                        event: AstrMessageEvent,
                        subcommand: str = "",
@@ -55,11 +68,11 @@ class mcstatus(Star):
         """
         插件主函数,/mcstatus help获取帮助
         """
-        if not self.enabled_group_check(event):
+        if not self.enabled_session_check(event):
             return
-            
+
         # 初始化返回结果变量
-        result_tuple: Tuple[bool, str] = (False, "")
+        result_tuple: tuple[bool, str] = (False, "")
 
         match subcommand:
             case "":
