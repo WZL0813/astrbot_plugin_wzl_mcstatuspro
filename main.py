@@ -7,7 +7,7 @@ from astrbot.core.platform.message_type import MessageType
 from .core.command_func import CommandFunc
 from .core.data_manager import DataManager
 
-plugin_version = "2.1.0"
+plugin_version = "2.1.1"
 
 class mcstatus(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
@@ -69,9 +69,9 @@ class mcstatus(Star):
         插件主函数,/mcstatus help获取帮助
         """
         if not self.enabled_session_check(event):
+            yield event.stop_event()
             return
 
-        # 初始化返回结果变量
         result_tuple: tuple[bool, str] = (False, "")
 
         match subcommand:
@@ -104,6 +104,7 @@ class mcstatus(Star):
             yield event.image_result(data)
         else:
             yield event.plain_result(data)
+        yield event.stop_event()
 
     async def terminate(self):
         if self.datamanager.save_config():
