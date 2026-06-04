@@ -15,7 +15,17 @@
 ✅ **快捷存储**：支持常用服务器的添加、删除、查看、列表展示。  
 ✅ **灵活配置**：支持分群/全局数据隔离，自动缓存管理，自定义背景与字体。  
 
-![](https://free.picui.cn/free/2025/12/29/69528c2c45858.png)  
+<details open>
+<summary><b>目前界面</b></summary>
+<br>
+<div align="center">
+<table>
+<tr>
+<td><img src="./Docx/Example1.jpg" alt="示例"></td>
+</tr>
+</table>
+</div>
+</details>
 
 ---
 
