@@ -3,4 +3,4 @@ desc: 云版MC服务器状态获取
 version: v2.1.1
 author: WZL0813
 astrbot_version: ">=4.16.0"
-repo: https://github.com/HuaZHiYouYou/astrbot_plugin_wzl_mcstatuspro
+repo: https://github.com/WZL0813/astrbot_plugin_wzl_mcstatuspro
