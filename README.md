@@ -34,10 +34,10 @@
 确保系统已安装 Git，在 `Astrbot/data/plugins/` 目录下打开终端，执行以下命令：
 ```bash
 # 全球/海外/港澳台
-git clone https://github.com/WhiteCloudOL/astrbot_plugin_mcstatus.git  
+git clone https://github.com/WZL0813/astrbot_plugin_mcstatuspro.git  
 
 # 大陆地区镜像
-git clone https://gh-proxy.com/https://github.com/WhiteCloudOL/astrbot_plugin_mcstatus.git
+git clone https://gh-proxy.com/https://github.com/WZL0813/astrbot_plugin_mcstatuspro.git
 ```
 完成后重启 AstrBot 即可载入插件。
 
@@ -102,5 +102,5 @@ git clone https://gh-proxy.com/https://github.com/WhiteCloudOL/astrbot_plugin_mc
 ---
 
 ## 📞 支持
-如果你喜欢这个插件，欢迎去 Github 给个 ⭐ 噢！  
+复刻于https://github.com/WhiteCloudOL/astrbot_plugin_mcstatus
 相关框架问题请访问：[AstrBot 帮助文档](https://astrbot.app)
