@@ -108,11 +108,23 @@ class CommandFunc:
             # 尝试通过 query 协议获取完整玩家列表（需要服务器启用 query）
             if len(players_list) < status.players.online and server:
                 try:
-                    query = await server.async_query()
+                    # 解析地址，提取端口（query协议通常与status使用相同端口）
+                    host, _, port = server_addr.rpartition(':')
+                    if not port.isdigit():
+                        port = 25565
+                    else:
+                        port = int(port)
+                    
+                    # 创建独立的 query 连接
+                    from mcstatus import JavaServer as QueryServer
+                    query_server = QueryServer(host, port)
+                    query = await query_server.async_query()
                     if query.players.names:
                         players_list = query.players.names
+                        logger.info(f"通过 query 协议获取到 {len(players_list)} 个玩家")
                 except Exception as e:
-                    # query 协议可能未启用，忽略错误
+                    # query 协议可能未启用或端口不同，忽略错误
+                    logger.debug(f"query 协议查询失败: {e}")
                     pass
 
             return {
