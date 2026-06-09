@@ -400,7 +400,21 @@ class Draw:
     async def draw_card(self, data_map: dict, seted_font_name: str) -> tuple[bool, str]:
         try:
             loop = asyncio.get_event_loop()
-            W, H = self.CARD_WIDTH, self.CARD_HEIGHT
+            W = self.CARD_WIDTH
+            
+            # 动态计算高度
+            players = data_map.get("players", [])
+            show_all = data_map.get("show_all_players", False)
+            
+            base_height = self.CARD_HEIGHT  # 580
+            players_per_line = 4
+            if show_all and len(players) > players_per_line:
+                # 每行4个玩家，每行需要约35像素高度
+                extra_lines = (len(players) - 1) // players_per_line  # 超过第一行的额外行数
+                extra_height = extra_lines * 35
+                H = base_height + extra_height
+            else:
+                H = base_height
 
             bg, draw, content_x, content_y = await self._init_canvas(W, H, data_map.get("server_icon", ""))
 
@@ -448,12 +462,34 @@ class Draw:
             list_y = grid_y + 130
             players = data_map.get("players", [])
             self.draw_cute_label(draw, content_x, list_y, "在线列表", font_label, self.CUTE_THEME["pill_blue"], self.CUTE_THEME["pill_text_blue"])
-            display_limit = 4
-            if not players: player_str = "当前没有可爱的玩家在线哦~"
+            
+            show_all = data_map.get("show_all_players", False)
+            player_start_y = list_y + 40
+            players_per_line = 4
+            
+            if not players:
+                draw.text((content_x + 5, player_start_y), "当前没有可爱的玩家在线哦~", font=font_small, fill=self.CUTE_THEME["text_main"])
+            elif show_all:
+                # 多行显示所有玩家，每行4个，紧凑排列
+                for i, player in enumerate(players):
+                    line_index = i // players_per_line
+                    col_index = i % players_per_line
+                    if col_index == 0:
+                        # 新的一行开始
+                        y_pos = player_start_y + line_index * 35
+                        line_text = player
+                    else:
+                        line_text += f", {player}"
+                    # 每行最后一个玩家或最后一个玩家时，绘制该行
+                    if col_index == players_per_line - 1 or i == len(players) - 1:
+                        draw.text((content_x + 5, y_pos), line_text, font=font_small, fill=self.CUTE_THEME["text_main"])
             else:
+                # motd模式：显示4个玩家 + 等X人
+                display_limit = 4
                 player_str = ", ".join(players[:display_limit])
-                if len(players) > display_limit: player_str += f" 等 {len(players)} 人"
-            draw.text((content_x + 5, list_y + 40), player_str, font=font_small, fill=self.CUTE_THEME["text_main"])
+                if len(players) > display_limit:
+                    player_str += f" 等 {len(players)} 人"
+                draw.text((content_x + 5, player_start_y), player_str, font=font_small, fill=self.CUTE_THEME["text_main"])
 
             margin = 35
             bar_h = 20

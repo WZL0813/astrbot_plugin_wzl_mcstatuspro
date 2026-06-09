@@ -1,6 +1,6 @@
 name: astrbot_plugin_wzl_mcstatuspro
 desc: 云版MC服务器状态获取
-version: v2.1.1
+version: v2.1.2
 author: WZL0813
 astrbot_version: ">=4.16.0"
 repo: https://github.com/WZL0813/astrbot_plugin_wzl_mcstatuspro

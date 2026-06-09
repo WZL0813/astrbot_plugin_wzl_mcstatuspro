@@ -3,7 +3,7 @@
 # ✨ AstrBot Plugin - MCStatus ✨
 *一款功能强大且可爱的 Minecraft 服务器状态查询插件*
 
-**当前版本**: `v2.1.1` | **Author**: WZL0813
+**当前版本**: `v2.1.2` | **Author**: WZL0813
 
 [![AstrBot Support](https://img.shields.io/badge/AstrBot-Support-blue)](https://astrbot.app)
 

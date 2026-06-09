@@ -104,6 +104,16 @@ class CommandFunc:
             players_list = []
             if status.players.sample is not None:
                 players_list = [player.name for player in status.players.sample]
+            
+            # 尝试通过 query 协议获取完整玩家列表（需要服务器启用 query）
+            if len(players_list) < status.players.online and server:
+                try:
+                    query = await server.async_query()
+                    if query.players.names:
+                        players_list = query.players.names
+                except Exception as e:
+                    # query 协议可能未启用，忽略错误
+                    pass
 
             return {
                 "server_addr": server_addr,
@@ -174,7 +184,27 @@ class CommandFunc:
         return await self._generate_image_response(data_map)
 
     async def _handle_players(self, event: AstrMessageEvent, server_addr: str = "") -> tuple[bool, str]:
-        return await self._handle_motd(event, server_addr)
+        if not server_addr:
+            return False, "用法：/mcstatus players <地址>"
+
+        server_status = await self.get_server_status(server_addr)
+        if server_status is None:
+             return False, "❌ 无法连接服务器，请检查地址。"
+
+        data_map = {
+            "server_icon": server_status.get("server_icon"),
+            "motd_raw": server_status.get("motd_raw"),
+            "addr": server_status.get("server_addr"),
+            "version": server_status.get("version"),
+            "protocol": server_status.get("protocol"),
+            "latency": server_status.get("latency"),
+            "online": server_status.get("online"),
+            "max": server_status.get("max"),
+            "players": server_status.get("players"),
+            "show_all_players": True
+        }
+
+        return await self._generate_image_response(data_map)
 
     async def _handle_look(self, event: AstrMessageEvent, server_name: str) -> tuple[bool, str]:
         if not server_name:
@@ -182,7 +212,7 @@ class CommandFunc:
         addr = self.datamanager.get_server_addr(server_name, event.get_group_id(), event.get_sender_id(), self.is_global)
         if addr is None:
             return False, f"❌ 未找到 {server_name}"
-        return await self._handle_motd(event, addr)
+        return await self._handle_players(event, addr)
 
     async def _handle_list(self, event: AstrMessageEvent) -> tuple[bool, str]:
         data = self.datamanager.get_all_configs(event.get_group_id(), event.get_sender_id(), self.is_global)
